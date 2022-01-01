@@ -98,7 +98,9 @@ Other Unix shell commands suggest further functionality: `tr`, `uniq`,
 and counters like `wc`.
 
 Once you've got a well-designed text-processing package,
-the next step is an interpreter that creates channels as necessary,
+the next step is an interpreter that 
+reads and parses interactive input,
+creates channels as necessary,
 and strings together goroutines running functions.
 This sounds rather like a text-processing shell,
 along the lines of [jq](https://stedolan.github.io/jq/),
