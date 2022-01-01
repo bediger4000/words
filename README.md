@@ -90,11 +90,12 @@ type Filter interface {
 
 At this point, I can't tell if naming "source" and "sink" interfaces
 would help.
-I wrote such functions, `processing.WordSubsets` and `processing.TeeOut.
+I wrote such functions, `processing.WordSubsets` and `processing.TeeOut`.
 
 The obvious functions missing from the package are named file inputs and outputs,
 and regular expression matching.
-Other Unix shell commands suggest further expansions: `tr`, `uniq`, and counters.
+Other Unix shell commands suggest further functionality: `tr`, `uniq`,
+and counters like `wc`.
 
 Once you've got a well-designed text-processing package,
 the next step is an interpreter that creates channels as necessary,
