@@ -13,14 +13,14 @@ I wrote a program to help find those words.
 ## Design
 
 I've written backtracking solutions to
-[Knight's Tour]()
-[N Queens]()
+[Knight's Tour](https://github.com/bediger4000/knights-tour)
+[N Queens](https://github.com/bediger4000/nqueens)
 and
-[Sudoku]()
-by having a goroutine running a recursive function.
+[Sudoku](https://github.com/bediger4000/sudoku-solver-2)
+by having a goroutine run a recursive function.
 When recursion terminates with a solution,
 the goroutine writes the solution to a channel.
-The main goroutine reads solutions and possible
+The main goroutine reads solutions and possibly
 eliminates duplicates.
 
 I followed that pattern for this problem.
@@ -58,3 +58,53 @@ func WordSubsets(word string, out chan string)
 func Tee(in, out1, out2 chan string)
 func TeeOut(in chan string)
 ```
+
+This package makes a very easy main function:
+
+```go
+func main() {
+    ch1 := make(chan string, 10)
+    ch2 := make(chan string, 10)
+    ch3 := make(chan string, 10)
+    ch4 := make(chan string, 10)
+
+    go processing.WordSubsets(os.Args[1], ch1) // generate subsets of characters
+    go processing.DictionaryMatches(ch1, ch2)  // dictionary words from subsets
+    go processing.Deduplicate(ch2, ch3)        // remove duplicate dictionary words
+    go processing.Sort(ch3, ch4)               // sort dictionary words alphabetically
+
+    processing.TeeOut(ch4)
+}
+```
+
+`package processing` isn't at all complete.
+It only hints at a useful set of functions.
+
+A useful package would name an interface for the functions:
+
+```go
+type Filter interface {
+	Run(in, out chan string, arguments ...interface{})
+}
+```
+
+At this point, I can't tell if naming "source" and "sink" interfaces
+would help.
+I wrote such functions, `processing.WordSubsets` and `processing.TeeOut.
+
+The obvious functions missing from the package are named file inputs and outputs,
+and regular expression matching.
+Other Unix shell commands suggest further expansions: `tr`, `uniq`, and counters.
+
+Once you've got a well-designed text-processing package,
+the next step is an interpreter that creates channels as necessary,
+and strings together goroutines running functions.
+This sounds rather like a text-processing shell,
+along the lines of [jq](https://stedolan.github.io/jq/),
+which handles JSON, not plain text,
+or [GNU datamash](https://www.gnu.org/software/datamash/).
+
+Tenatively, the command language would look a lot like traditional
+Unix shell "pipelines".
+It looks like if you don't remember the past,
+you are doomed to repeat it.
